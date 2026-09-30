@@ -347,8 +347,18 @@ window.Suited = window.Suited || {};
     keyHandler = (e) => { if (e.key === 'Enter') { beginSection(); return true; } };
   }
 
-  function quit() {
-    if (session && session.sections.some((s) => s.answers.some(Boolean)) && !confirm('Quit this session? Your progress will be lost.')) return;
+  // Two-step confirm in place of confirm(), which embedded viewers may block.
+  function armed(t, label) {
+    if (!t || t.dataset.armed === '1') return true;
+    t.dataset.armed = '1';
+    t.dataset.label = t.innerHTML;
+    t.innerHTML = label;
+    setTimeout(() => { if (t.isConnected) { t.dataset.armed = ''; t.innerHTML = t.dataset.label; } }, 3000);
+    return false;
+  }
+
+  function quit(t) {
+    if (session && session.sections.some((s) => s.answers.some(Boolean)) && !armed(t, 'Click again to quit')) return;
     session = null;
     go('practice');
   }
@@ -954,8 +964,8 @@ window.Suited = window.Suited || {};
       <section class="panel"><h2>History</h2>${rows ? `<div class="table-wrap"><table><thead><tr><th>When</th><th>Mode</th><th>Pace</th><th>Scores</th></tr></thead><tbody>${rows}</tbody></table></div>` : '<p class="muted">No sessions yet. <a href="#/suited/practice">Start practising →</a></p>'}</section>
       <p class="muted small">Progress is saved in this browser only. <button class="linkish" data-act="clear">Clear all data</button></p>
     `);
-    acts.clear = () => {
-      if (!confirm('Delete all saved Suited practice history and blitz scores?')) return;
+    acts.clear = (t) => {
+      if (!armed(t, 'Click again to delete all history')) return;
       store.history = []; store.blitz = []; save(); viewDashboard();
     };
   }
