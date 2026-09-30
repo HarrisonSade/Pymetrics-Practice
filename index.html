@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Assessment Practice</title>
+  <meta name="description" content="Free practice for Pymetrics games and the Suited assessment used by investment banks.">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="suited/suited.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header-inner">
+      <a class="brand" href="#/pymetrics">Assessment <span>Practice</span></a>
+      <nav class="tabs" aria-label="Assessments">
+        <a href="#/pymetrics" data-tab="pymetrics">Pymetrics</a>
+        <a href="#/suited" data-tab="suited">Suited</a>
+      </nav>
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle colour theme">Theme</button>
+    </div>
+  </header>
+
+  <main>
+    <section id="pymetrics-root" class="pym" hidden>
+      <p class="eyebrow">Pymetrics</p>
+      <h1>Pymetrics practice</h1>
+      <p class="lead">Pymetrics uses short neuroscience-based games to profile cognitive and emotional traits. There are no right answers: each game measures where you sit on a trait scale. Play naturally, stay consistent and read each set of instructions carefully.</p>
+      <div class="pym-grid">
+        <div class="pym-card"><span class="measures">Risk</span><h3>Balloons</h3><p>Pump balloons for money and bank before they pop. It measures risk tolerance and how you learn from losses.</p></div>
+        <div class="pym-card"><span class="measures">Fairness</span><h3>Money Exchange</h3><p>Give or split money with a partner. It measures trust, altruism and your sense of fairness.</p></div>
+        <div class="pym-card"><span class="measures">Effort</span><h3>Keypresses</h3><p>Press a key as fast as you can for easy or hard tasks. It measures motivation and effort allocation.</p></div>
+        <div class="pym-card"><span class="measures">Attention</span><h3>Arrows</h3><p>Respond to arrow direction or colour as the rules switch. It measures task switching and processing speed.</p></div>
+        <div class="pym-card"><span class="measures">Emotion</span><h3>Faces</h3><p>Identify the emotion on a face. It measures emotional intelligence.</p></div>
+        <div class="pym-card"><span class="measures">Planning</span><h3>Towers</h3><p>Rearrange discs in the fewest moves. It measures planning and problem solving.</p></div>
+        <div class="pym-card"><span class="measures">Memory</span><h3>Digits</h3><p>Recall growing strings of numbers. It measures working memory.</p></div>
+        <div class="pym-card"><span class="measures">Learning</span><h3>Cards</h3><p>Pick from decks with hidden payoffs. It measures learning from feedback and risk preference.</p></div>
+        <div class="pym-card"><span class="measures">Detail</span><h3>Lengths</h3><p>Spot which face has a longer mouth. It measures attention to detail and response to rewards.</p></div>
+        <div class="pym-card"><span class="measures">Impulsivity</span><h3>Stop</h3><p>Press when you see red, but not when you see green. It measures impulse control.</p></div>
+      </div>
+      <p class="lead">Also applying to banks that use Suited? <a href="#/suited">Open the Suited practice tab →</a></p>
+    </section>
+
+    <section id="suited-root" hidden></section>
+  </main>
+
+  <script src="suited/content.js"></script>
+  <script src="suited/generators.js"></script>
+  <script src="suited/app.js"></script>
+  <script>
+    (function () {
+      var pym = document.getElementById('pymetrics-root');
+      var suited = document.getElementById('suited-root');
+      Suited.mount(suited);
+
+      function route() {
+        var parts = (location.hash || '#/pymetrics').replace(/^#\/?/, '').split('/');
+        var tab = parts[0] === 'suited' ? 'suited' : 'pymetrics';
+        pym.hidden = tab !== 'pymetrics';
+        suited.hidden = tab !== 'suited';
+        document.querySelectorAll('.tabs a').forEach(function (a) { a.classList.toggle('active', a.dataset.tab === tab); });
+        document.title = (tab === 'suited' ? 'Suited' : 'Pymetrics') + ' · Assessment Practice';
+        if (tab === 'suited') Suited.route(parts[1] || '');
+        else Suited.route('__idle');
+      }
+      window.addEventListener('hashchange', route);
+      route();
+
+      var btn = document.getElementById('theme-toggle');
+      try { var saved = localStorage.getItem('theme'); if (saved) document.documentElement.dataset.theme = saved; } catch (e) {}
+      btn.addEventListener('click', function () {
+        var cur = document.documentElement.dataset.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        var next = cur === 'dark' ? 'light' : 'dark';
+        document.documentElement.dataset.theme = next;
+        try { localStorage.setItem('theme', next); } catch (e) {}
+      });
+    })();
+  </script>
+</body>
+</html>
